@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: root
+  namespace: unicorn
+  labels:
+    app: root
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: root
+  template:
+    metadata:
+      labels:
+        app: root
+    spec:
+      serviceAccountName: root
+      containers:
+        - name: root
+          image: 314146331900.dkr.ecr.ap-southeast-1.amazonaws.com/root:v0
+          ports:
+            - containerPort: 80
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+            limits:
+              memory: "512Mi"
+              cpu: "1"
+          volumeMounts:
+          - name: persistent-storage
+            mountPath: /data
+      volumes:
+      - name: persistent-storage
+        persistentVolumeClaim:
+          claimName: efs-claim
